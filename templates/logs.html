@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audit Log</title>
+    <style>
+        body { font-family: Arial; background: #1a1a2e; color: white; padding: 20px; }
+        .card { background: #16213e; padding: 20px; margin: 10px; border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; border: 1px solid #333; text-align: left; font-size: 12px; }
+        th { background: #0f3460; }
+        .clean { color: #00ff88; }
+        .threat { color: #ff4444; }
+        .error { color: #ffaa00; }
+        button { padding: 10px 20px; background: #0f3460; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>📋 Audit Log</h1>
+    <div class="card">
+        <a href="/"><button>Back to Dashboard</button></a>
+        <a href="/export"><button>Export CSV</button></a>
+    </div>
+    <div class="card">
+        <table>
+            <tr>
+                <th>Time</th>
+                <th>Device</th>
+                <th>File</th>
+                <th>SHA256</th>
+                <th>Verdict</th>
+                <th>Action</th>
+            </tr>
+            {% for event in events %}
+            <tr>
+                <td>{{ event[1] }}</td>
+                <td>{{ event[2] }}</td>
+                <td>{{ event[4] }}</td>
+                <td>{{ event[6][:16] }}...</td>
+                <td class="{{ event[8] }}">{{ event[8] }}</td>
+                <td>{{ event[10] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
