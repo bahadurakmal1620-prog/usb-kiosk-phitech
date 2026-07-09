@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>USB Kiosk Dashboard</title>
+    <style>
+        body { font-family: Arial; background: #1a1a2e; color: white; padding: 20px; }
+        .card { background: #16213e; padding: 20px; margin: 10px; border-radius: 10px; }
+        .clean { color: #00ff88; }
+        .threat { color: #ff4444; }
+        .error { color: #ffaa00; }
+        .alert-banner { background: #ff4444; padding: 15px; border-radius: 10px; display: none; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; border: 1px solid #333; text-align: left; }
+        th { background: #0f3460; }
+        button { padding: 10px 20px; background: #0f3460; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🛡️ USB Kiosk Scanner</h1>
+
+    <div id="alert-banner" class="card alert-banner">
+        ⚠️ THREAT DETECTED! Files have been quarantined.
+        <button onclick="acknowledge()">Acknowledge</button>
+    </div>
+
+    <div class="card">
+        <h2>Device</h2>
+        <p id="device">No device</p>
+        <p id="current-file">-</p>
+    </div>
+
+    <div class="card">
+        <h2>Session Summary</h2>
+        <p>Total: <span id="total">0</span></p>
+        <p class="clean">Clean: <span id="clean">0</span></p>
+        <p class="threat">Threats: <span id="threat">0</span></p>
+        <p class="error">Errors: <span id="error">0</span></p>
+    </div>
+
+    <div class="card">
+        <a href="/logs"><button>View Audit Log</button></a>
+        <a href="/export"><button>Export CSV</button></a>
+    </div>
+
+    <script>
+        function updateStatus() {
+            fetch('/status')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('device').textContent = data.device || 'No device';
+                    document.getElementById('current-file').textContent = data.current_file || '-';
+                    document.getElementById('total').textContent = data.total;
+                    document.getElementById('clean').textContent = data.clean;
+                    document.getElementById('threat').textContent = data.threat;
+                    document.getElementById('error').textContent = data.error;
+                    document.getElementById('alert-banner').style.display = data.alert ? 'block' : 'none';
+                });
+        }
+        function acknowledge() {
+            fetch('/acknowledge').then(() => updateStatus());
+        }
+        setInterval(updateStatus, 2000);
+        updateStatus();
+    </script>
+</body>
+</html>
